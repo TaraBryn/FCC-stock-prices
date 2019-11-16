@@ -19,16 +19,11 @@ module.exports = function (app, db) {
     var stocks = req.query.stock;
     if (!Array.isArray(stocks)) stocks = [stocks];
     if(stocks.length > 2) stocks.splice(2);
-    console.log(stocks);
     db.collection('stocks').find({stock: {$in: stocks}})
+    .toArray()
     .then(data => {
-      var storedStocks = data.toArray();
-      if (storedStocks.length == 0) {
-        
-      }
-      else {
-        
-      }
+      console.log(data)
+      
     })
   });
 };

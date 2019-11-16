@@ -28,9 +28,15 @@ module.exports = function (app, db) {
     if (!Array.isArray(stock)) stock = [stock];
     stock.splice(2);
     var stockData = [];
-    stock.forEach({
-      
-    })
+    try {
+      stock.forEach(e => {
+        req.query({
+          region: 'US',
+          lang: 'en',
+          symbol: e
+        })
+      })
+    } 
+    catch(e) {res.send('invalid stock symbols');}
   });
-    
 };

@@ -24,6 +24,7 @@ module.exports = function (app, db) {
   app.route('/api/stock-prices')
   .get(function (req, res){
     var ip = req.headers["x-forwarded-for"].match(/(?:[0-9]{1,3}\.){3}[0-9]{1,3}/)[0];
+    var stock = req.query.stocks;
   });
     
 };

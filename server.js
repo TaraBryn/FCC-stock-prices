@@ -15,7 +15,10 @@ var app = express();
 
 app.use(helmet({
   contentSecurityPolicy: {directives: {
-    defaultSrc: ["'self'"]
+    defaultSrc: ["'self'"],
+    imgSrc: ["'self'", 'https://hyperdev.com/'],
+    styleSrc: ["'self'", "'unsafe-inline'"],
+    scripSrc: ["'self'", "'unsafe-inline'"]
   }}
 }))
 

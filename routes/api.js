@@ -10,7 +10,7 @@
 
 var expect = require('chai').expect;
 var ObjectId = require('mongodb').ObjectId;
-import $ from 'jquery';
+var $ = require('jquery');
 
 module.exports = function (app, db) {
   

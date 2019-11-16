@@ -9,7 +9,7 @@
 'use strict';
 
 var expect = require('chai').expect;
-var MongoClient = require('mongodb');
+var ObjectId = require('mongodb').ObjectId;
 
 module.exports = function (app, db) {
   
@@ -17,8 +17,14 @@ module.exports = function (app, db) {
   .get(function (req, res){
     var ip = req.headers["x-forwarded-for"].match(/(?:[0-9]{1,3}\.){3}[0-9]{1,3}/)[0];
     var stocks = req.query.stock;
-    if (!Array.isArray(stock)) stock = [stock];
-    if(stock.length > 2) stock.splice(2);
-    db.collection('stocks').insertOne(stock.map(stoc))
+    if (!Array.isArray(stocks)) stocks = [stocks];
+    if(stocks.length > 2) stocks.splice(2);
+    console.log(stocks);
+    db.collection('stocks').insertMany(stocks.map(stock=>{return {_id: new ObjectId(), stock}}))
+    .then(function(data){
+      var result = db.collection('stocks').find({stock: {$in: stocks}});
+      console.log(result.toArray())
+    })
+    .catch(err=>console.log(err));
   });
 };

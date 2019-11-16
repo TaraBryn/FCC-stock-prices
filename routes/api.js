@@ -20,11 +20,15 @@ module.exports = function (app, db) {
     if (!Array.isArray(stocks)) stocks = [stocks];
     if(stocks.length > 2) stocks.splice(2);
     console.log(stocks);
-    db.collection('stocks').insertMany(stocks.map(stock=>{return {_id: new ObjectId(), stock}}))
-    .then(function(data){
-      var result = db.collection('stocks').find({stock: {$in: stocks}});
-      console.log(result.toArray())
+    db.collection('stocks').find({stock: {$in: stocks}})
+    .then(data => {
+      var storedStocks = data.toArray();
+      if (storedStocks.length == 0) {
+        
+      }
+      else {
+        
+      }
     })
-    .catch(err=>console.log(err));
   });
 };

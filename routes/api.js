@@ -27,16 +27,18 @@ module.exports = function (app, db) {
     var stock = req.query.stock;
     if (!Array.isArray(stock)) stock = [stock];
     stock.splice(2);
-    var stockData = [];
+    var stockData;
     try {
-      stock.forEach(e => {
+      stockData = stock.forEach(e => {
         req.query({
           region: 'US',
           lang: 'en',
           symbol: e
         })
+        return req.end(stockRes => stockRes.error || stockRes.price)
       })
     } 
     catch(e) {res.send('invalid stock symbols');}
+    console.log(stockData)
   });
 };

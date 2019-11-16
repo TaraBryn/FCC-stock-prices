@@ -28,6 +28,9 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 MongoClient.connect(process.env.DB, {useUnifiedTopology: true}, function(err, client){
   
+  //Routing for API 
+  apiRoutes(app, client.db('stock_prices'));
+  
   //Index page (static HTML)
   app.route('/')
     .get(function (req, res) {
@@ -41,8 +44,7 @@ MongoClient.connect(process.env.DB, {useUnifiedTopology: true}, function(err, cl
       .send('Not Found');
   });
   
-  //Routing for API 
-  apiRoutes(app, client.db('stock_prices'));
+  
 
 })
 

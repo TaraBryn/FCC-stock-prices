@@ -19,10 +19,13 @@ module.exports = function (app, db) {
     var stocks = req.query.stock;
     if (!Array.isArray(stocks)) stocks = [stocks];
     if(stocks.length > 2) stocks.splice(2);
-    db.collection('stocks').find({stock: {$in: stocks}})
-    .toArray()
+    Promise.all(stocks.map(e=>{
+      $.ajax({
+        type: 'GET',
+        
+      })
+    }))
     .then(data => {
-      console.log(data)
       
     })
   });

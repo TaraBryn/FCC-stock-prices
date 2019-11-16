@@ -16,9 +16,9 @@ var app = express();
 app.use(helmet({
   contentSecurityPolicy: {directives: {
     defaultSrc: ["'self'"],
-    imgSrc: ["'self'", 'https://hyperdev.com/'],
-    styleSrc: ["'self'", "'unsafe-inline'"],
-    scripSrc: ["'self'", "'unsafe-inline'"]
+    imgSrc: ["'self'", 'https://hyperdev.com/', 'https://cdn.gomix.com/', 'http://glitch.com/'],
+    scriptSrc: ["'self'", "'unsafe-inline'", 'https://code.jquery.com/'],
+    styleSrc: ["'self'", "'unsafe-inline'"]
   }}
 }))
 

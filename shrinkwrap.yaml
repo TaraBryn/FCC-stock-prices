@@ -5,6 +5,7 @@ dependencies:
   cors: 2.8.5
   express: 4.17.1
   helmet: 3.21.2
+  jquery: 3.4.1
   mocha: 6.2.2
   mongodb: 3.3.4
   zombie: 6.1.4
@@ -1027,6 +1028,10 @@ packages:
     dev: false
     resolution:
       integrity: sha1-R+Y/evVa+m+S4VAOaQ64uFKcCZo=
+  /jquery/3.4.1:
+    dev: false
+    resolution:
+      integrity: sha512-36+AdBzCL+y6qjw5Tx7HgzeGCzC81MDDgaUP8ld2zhx58HdqXGoBd+tHdrBMiyjGQs0Hxs/MLZTu/eHNJJuWPw==
   /js-yaml/3.13.1:
     dependencies:
       argparse: 1.0.10
@@ -2075,6 +2080,7 @@ specifiers:
   cors: ^2.8.5
   express: ^4.16.4
   helmet: ^3.21.2
+  jquery: ^3.4.1
   mocha: ^6.2.1
   mongodb: ^3.3.4
   zombie: ^6.1.4

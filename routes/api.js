@@ -10,6 +10,7 @@
 
 var expect = require('chai').expect;
 var ObjectId = require('mongodb').ObjectId;
+import $ from 'jquery';
 
 module.exports = function (app, db) {
   
@@ -21,7 +22,7 @@ module.exports = function (app, db) {
     if(stocks.length > 2) stocks.splice(2);
     Promise.all(stocks.map(e=>{
       $.ajax({
-        type: 'GET',
+        type: 'GET'
         
       })
     }))

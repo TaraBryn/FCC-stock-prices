@@ -14,9 +14,9 @@ var unirest = require('unirest');
 
 module.exports = function (app, db) {
   
-  var req = unirest("GET", "https://apidojo-yahoo-finance-v1.p.rapidapi.com/stock/get-detail");
+  var apiReq = unirest("GET", "https://apidojo-yahoo-finance-v1.p.rapidapi.com/stock/get-detail");
   
-  req.headers({
+  apiReq.headers({
     "x-rapidapi-host": "apidojo-yahoo-finance-v1.p.rapidapi.com",
     'x-rapidapi-key': process.env.RAPID_API_KEY
   })
@@ -29,16 +29,19 @@ module.exports = function (app, db) {
     stock.splice(2);
     var stockData;
     try {
-      stockData = stock.forEach(e => {
-        req.query({
+      stockData = stock.map(e => {
+        apiReq.query({
           region: 'US',
           lang: 'en',
           symbol: e
         })
-        return req.end(stockRes => stockRes.error || stockRes.price)
+        return apiReq.end(stockRes => {
+          console.log(stockRes.body)
+          return stockRes.error || stockRes.body.price
+        })
       })
+      //console.log(stockData)
     } 
-    catch(e) {res.send('invalid stock symbols');}
-    console.log(stockData)
+    catch(e) {console.log(e);}
   });
 };

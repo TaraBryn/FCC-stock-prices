@@ -20,8 +20,7 @@ module.exports = function (app, db) {
     var stocks = req.query.stock;
     if (!Array.isArray(stocks)) stocks = [stocks];
     if(stocks.length > 2) stocks.splice(2);
-    
-    Promise.all(stocks.map(e=>{
+    return Promise.all(stocks.map(e=>{
       var url = `https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=${e}&apikey=${process.env.API_KEY}`;
       var dataReq = new XMLHttpRequest();
       dataReq.open('GET', url, true);

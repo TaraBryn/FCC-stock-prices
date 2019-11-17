@@ -54,14 +54,16 @@ module.exports = function (app, db) {
           symbol: metaData['2. Symbol'],
           timeZone: metaData['5. Time Zone'],
           likes: req.query.like ? [ip] : [],
-          valueData: {
-            date: dates[0],
-            open: currentValues['1. open'],
-            high: currentValues['2. high'],
-            low: currentValues['3. low'],
-            close: currentValues['4. close'],
-            volume: currentValues['5. volume']
-          }
+          valueData: [
+            {
+              date: dates[0],
+              open: currentValues['1. open'],
+              high: currentValues['2. high'],
+              low: currentValues['3. low'],
+              close: currentValues['4. close'],
+              volume: currentValues['5. volume']
+            }
+          ]
         }
       })
       .catch(err => console.log('Promise Error: ', err))
@@ -75,7 +77,6 @@ module.exports = function (app, db) {
           var docIndex = docSymbols.indexOf(stock.symbol);
           if (docIndex == -1) {
             db.collection('stocks').insertOne(stock);
-            console.log(stock)
             return {stock: stock.symbol, price: stock.valueData[0].close || stock.valueData[0].open, likes: stock.likes.length};
           } else if (req.query.likes || docs[docIndex].valueData.map(e=>e.date).indexOf(stock.valueData[0].date) == -1) {
             let likes = docs[docIndex].likes;

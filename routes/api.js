@@ -78,7 +78,7 @@ module.exports = function (app, db) {
           if (docIndex == -1) {
             db.collection('stocks').insertOne(stock);
             return {stock: stock.symbol, price: stock.valueData[0].close || stock.valueData[0].open, likes: stock.likes.length};
-          } else if (req.query.likes || docs[docIndex].valueData.map(e=>e.date).indexOf(stock.valueData[0].date) == -1) {
+          } else if (docs[docIndex].valueData.map(e=>e.date).indexOf(stock.valueData[0].date) == -1) {
             let likes = docs[docIndex].likes;
             if (req.query.like) likes.push(ip);
             db.collection('stocks').updateOne({_id: docs[docIndex]._id}, {
@@ -90,14 +90,24 @@ module.exports = function (app, db) {
             let valueData = docs[docIndex].valueData[docs[docIndex].valueData.length-1];
             let likes = docs[docIndex].likes;
             if (req.query.like) likes.push(ip);
+            console.log(likes, req.query);
             if (stock.valueData[0].open != valueData.open 
                 || stock.valueData[0].high != valueData.high 
                 || stock.valueData[0].low != valueData.low 
                 || stock.valueData[0].close != valueData.close 
                 || stock.valueData[0].volume != valueData.volume 
                 || req.query.likes) {
-              
-              db.collection('stocks').updateOne({
+              let updateArg = {
+                $set: {
+                  'valueData.$.open': stock.valueData[0].open,
+                  'valueData.$.high': stock.valueData[0].high,
+                  'valueData.$.low': stock.valueData[0].low,
+                  'valueData.$.close': stock.valueData[0].close,
+                  'valueData.$.volume': stock.valueData[0].volume
+                }
+              }
+              if (req.quer)
+              db.collection('stocks').updateMany({
                 _id: docs[docIndex]._id, 
                 'valueData.date': stock.valueData[0].date},{
                 $set: {
@@ -113,7 +123,6 @@ module.exports = function (app, db) {
           }
         }))
         .then(data => {
-          console.log(data)
           if (data.length == 2) {
             data[0].rel_likes = data[0].likes - data[1].likes;
             data[1].rel_likes = data[1].likes - data[0].likes;

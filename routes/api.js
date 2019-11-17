@@ -30,7 +30,8 @@ module.exports = function (app, db) {
         var keys = Object.keys(data).sort((a,b)=>a-b);
         return data[keys[0]];
       }
-      return new PromisedataReq.send();
+      var promise = new Promise(dataReq.send);
+      return (promise.then(d=>d))
     }))
     .then(data => {
       console.log(data);

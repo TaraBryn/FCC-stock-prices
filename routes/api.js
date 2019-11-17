@@ -60,16 +60,15 @@ module.exports = function (app, db) {
       .catch(err => console.log('Promise Error: ', err))
     }))
     .then(data => {
-      var valueObjects = 
       db.collection.find({symbol: {$in: data.map(e=>e.symbol)}})
       .toArray().then(docs => {
-        if (docs.length == 0) {
-          
-        } else if (docs.map(doc=>doc.valueData[0].date).some(date=>data.map(e=>e.valueData.date).indexOf(date) == -1)) {
-          
-        } else {
-          
-        }
+        var docSymbols = docs.map(doc=>doc.symbol);
+        data.forEach(stock => {
+          var docIndex = docSymbols.indexOf(stock);
+          if (docIndex == -1) {
+            
+          } else if (docs[docIndex].valueData.map(e))
+        })
       })
     })
     .catch(err => res.json(err));

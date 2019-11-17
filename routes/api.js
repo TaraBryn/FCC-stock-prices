@@ -10,8 +10,6 @@
 
 var expect = require('chai').expect;
 var ObjectId = require('mongodb').ObjectId;
-var $ = require('jquery');
-
 module.exports = function (app, db) {
   
   app.route('/api/stock-prices')
@@ -21,10 +19,7 @@ module.exports = function (app, db) {
     if (!Array.isArray(stocks)) stocks = [stocks];
     if(stocks.length > 2) stocks.splice(2);
     Promise.all(stocks.map(e=>{
-      $.ajax({
-        type: 'GET'
-        
-      })
+      var url = `https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=MSFT&symbol=GOOGL&apikey=RG1G8Y13VBW5MJ2G`
     }))
     .then(data => {
       

@@ -72,10 +72,10 @@ module.exports = function (app, db) {
         var docSymbols = docs.map(doc=>doc.symbol);
         Promise.all(data.map(stock => {
           var docIndex = docSymbols.indexOf(stock.symbol);
-          console.log(stock)
           if (docIndex == -1) {
             db.collection('stocks').insertOne(stock);
-            return {stock: stock.symbol, price: stock.valueData[0].close || stock.value[0].open, likes: stock.likes.length};
+            console.log(stock)
+            return {stock: stock.symbol, price: stock.valueData[0].close || stock.valueData[0].open, likes: stock.likes.length};
           } else if (req.query.likes || docs[docIndex].valueData.map(e=>e.date).indexOf(stock.valueData[0].date) == -1) {
             let likes = docs[docIndex].likes;
             if (req.query.like) likes.push(ip);
@@ -115,9 +115,10 @@ module.exports = function (app, db) {
             data[1].rel_likes = data[1].likes - data[0].likes;
             delete data[0].likes;
             delete data[1].likes;
-            res.json(data);
           }
+          res.json(data);
         })
+        .catch(err=>res.json(err))
       })
     })
     .catch(err => res.json(err));

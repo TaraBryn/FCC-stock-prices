@@ -17,8 +17,8 @@ function makeRequest(url){
     var xhr = new XMLHttpRequest();
     xhr.open('GET', url, true);
     xhr.onload = function() {
-      if (this.status > 200 && this.status < 300)
-        resolve(xhr.responseText);
+      if (this.status >= 200 && this.status < 300)
+        resolve(JSON.parse(xhr.responseText));
       else reject({
         status: this.status,
         statusText: xhr.statusText
@@ -47,12 +47,17 @@ module.exports = function (app, db) {
       var dataReq = new XMLHttpRequest();
       dataReq.open('GET', url, true);
       return makeRequest(url)
-      .then(rawData => {
-        var data = rawData['Time Series (Daily)'];
-        var keys = Object.keys(data).sort((a,b)=>a-b);
-        return data[keys[0]];
+      .then(data => {
+        //console.log(rawData);
+        var metaData = data['Meta Data'];
+        var timeData = data["Time Series (Daily)"];
+        var dates = Object.keys(data).sort((a,b)=>a-b);
+        return {
+          symbol: metaData.symbol,
+          
+        }
       })
-      .catch(err => console.log(err))
+      .catch(err => console.log('Promise Error: ', err))
     }))
     .then(data => {
       console.log(data);

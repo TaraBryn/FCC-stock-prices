@@ -49,23 +49,30 @@ module.exports = function (app, db) {
         var metaData = data['Meta Data'];
         var valueData = data["Time Series (Daily)"];
         var dates = Object.keys(valueData).sort((a,b)=>a-b);
-        var result =  {
+        var currentValues = valueData[dates[0]];
+        return  {
           symbol: metaData['2. Symbol'],
           timeZone: metaData['5. Time Zone'],
           likes: req.query.like ? [ip] : [],
-          valueData: [Object.assign({date: dates[0]}, valueData[dates[0]])]
+          valueData: {
+            date: dates[0],
+            open: currentValues['1. open'],
+            high: currentValues['2. high'],
+            low: currentValues['3. low'],
+            close: currentValues['4. close'],
+            volume: currentValues['5. volume']
+          }
         }
-        console.log(result);
-        return result;
       })
       .catch(err => console.log('Promise Error: ', err))
     }))
     .then(data => {
-      db.collection.find({symbol: {$in: data.map(e=>e.symbol)}})
+      db.collection('stocks').find({symbol: {$in: data.map(e=>e.symbol)}})
       .toArray().then(docs => {
         var docSymbols = docs.map(doc=>doc.symbol);
         Promise.all(data.map(stock => {
           var docIndex = docSymbols.indexOf(stock.symbol);
+          console.log(stock)
           if (docIndex == -1) {
             db.collection('stocks').insertOne(stock);
             return {stock: stock.symbol, price: stock.valueData[0].close || stock.value[0].open, likes: stock.likes.length};

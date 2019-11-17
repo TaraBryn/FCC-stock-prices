@@ -52,6 +52,7 @@ module.exports = function (app, db) {
         return {
           symbol: metaData['2. Symbol'],
           timeZone: metaData['5. Time Zone'],
+          likes: req.query.likes ? [ip] : [],
           valueData: [Object.assign({date: dates[0]}, valueData[dates[0]])]
         }
       })
@@ -64,12 +65,16 @@ module.exports = function (app, db) {
         Promise.all(data.map(stock => {
           var docIndex = docSymbols.indexOf(stock.symbol);
           if (docIndex == -1) {
-            db.collection('stocks').insertOne(Object.assign(stock, {likes: req.query.like ? 1 : 0}));
-            return {stock: stock.symbol, price: stock.valueData[0]. close || stock.balue[0].open, likes: req.querty.like ? 1 : 0};
+            db.collection('stocks').insertOne(stock);
+            return {stock: stock.symbol, price: stock.valueData[0].close || stock.value[0].open, likes: stock.likes.length};
           } else if (docs[docIndex].valueData.map(e=>e.date).indexOf(stock.valueData[0].date) == -1) {
             let likes = docs[docIndex].likes;
-            if (req.query.likes) likes++;
-            db.collection('stocks').updateOne({_id: docs[docIndex]._id}, {$push})
+            if (req.query.likes) likes.push(ip);
+            db.collection('stocks').updateOne({_id: docs[docIndex]._id}, {
+              $push: {valueData: stock.valueData[0]},
+              $set: {likes}
+            });
+            return {stock: stock.symbol, price: stock.valueData[0].close || stock.value[0].open, likes.length};
           } else {
             
           }

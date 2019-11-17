@@ -48,13 +48,14 @@ module.exports = function (app, db) {
       dataReq.open('GET', url, true);
       return makeRequest(url)
       .then(data => {
-        //console.log(rawData);
         var metaData = data['Meta Data'];
-        var timeData = data["Time Series (Daily)"];
-        var dates = Object.keys(data).sort((a,b)=>a-b);
+        var valueData = data["Time Series (Daily)"];
+        var dates = Object.keys(valueData).sort((a,b)=>a-b);
         return {
-          symbol: metaData.symbol,
-          
+          symbol: metaData['2. Symbol'],
+          timeZone: metaData['5. Time Zone'],
+          date: dates[0],
+          valueData: valueData[dates[0]]
         }
       })
       .catch(err => console.log('Promise Error: ', err))

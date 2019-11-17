@@ -36,26 +36,6 @@ function makeRequest(url){
 
 module.exports = function (app, db) {
   
-  function updateDB(data, docs){
-    return new Promise(function(resolve, reject){
-      db.collection.find({symbol: {$in: data.map(e=>e.symbol)}})
-      .toArray().then(docs => {
-        var result = {};
-        var docSymbols = docs.map(doc=>doc.symbol);
-        data.forEach(stock => {
-          var docIndex = docSymbols.indexOf(stock);
-          if (docIndex == -1) {
-            db.collection.insert
-          } else if (docs[docIndex].valueData.map(e=>e.date).indexOf(stock.valueData.date) == -1) {
-            
-          } else {
-            
-          }
-        })
-      })
-    })
-  }
-  
   app.route('/api/stock-prices')
   .get(function (req, res){
     var ip = req.headers["x-forwarded-for"].match(/(?:[0-9]{1,3}\.){3}[0-9]{1,3}/)[0];
@@ -64,8 +44,6 @@ module.exports = function (app, db) {
     if(stocks.length > 2) stocks.splice(2);
     Promise.all(stocks.map(e=>{
       var url = `https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=${e}&apikey=${process.env.API_KEY}`;
-      var dataReq = new XMLHttpRequest();
-      dataReq.open('GET', url, true);
       return makeRequest(url)
       .then(data => {
         var metaData = data['Meta Data'];
@@ -80,7 +58,25 @@ module.exports = function (app, db) {
       .catch(err => console.log('Promise Error: ', err))
     }))
     .then(data => {
-      
+      db.collection.find({symbol: {$in: data.map(e=>e.symbol)}})
+      .toArray().then(docs => {
+        var docSymbols = docs.map(doc=>doc.symbol);
+        Promise.all(data.map(stock => {
+          var docIndex = docSymbols.indexOf(stock);
+          if (docIndex == -1) {
+            db.collection.insertOne({
+              
+            })
+          } else if (docs[docIndex].valueData.map(e=>e.date).indexOf(stock.valueData.date) == -1) {
+            
+          } else {
+            
+          }
+        }))
+        .then(result => {
+          
+        })
+      })
     })
     .catch(err => res.json(err));
   });

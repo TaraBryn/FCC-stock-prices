@@ -61,7 +61,14 @@ module.exports = function (app, db) {
       .catch(err => console.log('Promise Error: ', err))
     }))
     .then(data => {
-      console.log(data);
+      var valueObjects = 
+      db.collection.find({symbol: {$in: data.map(e=>e.symbol)}})
+      .toArray().then(docs => {
+        if (docs.length == 0) {
+          
+        } else if (docs.some(doc=>doc.))
+      })
     })
+    .catch(err => res.json(err));
   });
 };

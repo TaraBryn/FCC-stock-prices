@@ -43,7 +43,7 @@ module.exports = function (app, db) {
     if (!Array.isArray(stocks)) stocks = [stocks];
     if(stocks.length > 2) stocks.splice(2);
     Promise.all(stocks.map(e=>{
-      var url = `https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=${e}&apikey=${process.env.API_KEY}`;
+      var url = `https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=${e.toUpperCase()}&apikey=${process.env.API_KEY}`;
       return makeRequest(url)
       .then(data => {
         var metaData = data['Meta Data'];
@@ -80,7 +80,7 @@ module.exports = function (app, db) {
             return {stock: stock.symbol, price: stock.valueData[0].close || stock.valueData[0].open, likes: stock.likes.length};
           } else if (docs[docIndex].valueData.map(e=>e.date).indexOf(stock.valueData[0].date) == -1) {
             let likes = docs[docIndex].likes;
-            if (req.query.like) likes.push(ip);
+            if (req.query.like && likes.indexOf(ip) == -1) likes.push(ip);
             db.collection('stocks').updateOne({_id: docs[docIndex]._id}, {
               $push: {valueData: stock.valueData[0]},
               $set: {likes}
@@ -89,24 +89,14 @@ module.exports = function (app, db) {
           } else {
             let valueData = docs[docIndex].valueData[docs[docIndex].valueData.length-1];
             let likes = docs[docIndex].likes;
-            if (req.query.like) likes.push(ip);
+            if (req.query.like && likes.indexOf(ip) == -1) likes.push(ip);
             console.log(likes, req.query);
             if (stock.valueData[0].open != valueData.open 
                 || stock.valueData[0].high != valueData.high 
                 || stock.valueData[0].low != valueData.low 
                 || stock.valueData[0].close != valueData.close 
                 || stock.valueData[0].volume != valueData.volume 
-                || req.query.likes) {
-              let updateArg = {
-                $set: {
-                  'valueData.$.open': stock.valueData[0].open,
-                  'valueData.$.high': stock.valueData[0].high,
-                  'valueData.$.low': stock.valueData[0].low,
-                  'valueData.$.close': stock.valueData[0].close,
-                  'valueData.$.volume': stock.valueData[0].volume
-                }
-              }
-              if (req.quer)
+                || req.query.like) {
               db.collection('stocks').updateMany({
                 _id: docs[docIndex]._id, 
                 'valueData.date': stock.valueData[0].date},{

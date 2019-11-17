@@ -7,6 +7,7 @@ dependencies:
   helmet: 3.21.2
   mocha: 6.2.2
   mongodb: 3.3.4
+  xmlhttprequest: 1.8.0
   zombie: 6.1.4
 packages:
   /@types/chai/4.2.5:
@@ -2010,6 +2011,12 @@ packages:
     dev: false
     resolution:
       integrity: sha512-A5CUptxDsvxKJEU3yO6DuWBSJz/qizqzJKOMIfUJHETbBw/sFaDxgd6fxm1ewUaM0jZ444Fc5vC5ROYurg/4Pw==
+  /xmlhttprequest/1.8.0:
+    dev: false
+    engines:
+      node: '>=0.4.0'
+    resolution:
+      integrity: sha1-Z/4HXFwk/vOfnWX197f+dRcZaPw=
   /y18n/4.0.0:
     dev: false
     resolution:
@@ -2077,4 +2084,5 @@ specifiers:
   helmet: ^3.21.2
   mocha: ^6.2.1
   mongodb: ^3.3.4
+  xmlhttprequest: ^1.8.0
   zombie: ^6.1.4

@@ -10,6 +10,8 @@
 
 var expect = require('chai').expect;
 var ObjectId = require('mongodb').ObjectId;
+var XMLHttpRequest = require('xmlhttprequest').XMLHttpRequest;
+
 module.exports = function (app, db) {
   
   app.route('/api/stock-prices')
@@ -24,7 +26,7 @@ module.exports = function (app, db) {
       dataReq.open('GET', url, true);
       dataReq.send();
       dataReq.onload=function(){
-        var data = JSON.parse(dataReq.responseText);
+        var data = JSON.parse(dataReq.responseText)['Time Series (dail)']
         console.log(data);
         
       }

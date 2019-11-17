@@ -13,11 +13,18 @@ var ObjectId = require('mongodb').ObjectId;
 var XMLHttpRequest = require('xmlhttprequest').XMLHttpRequest;
 
 function makeRequest(url, done){
-  var xhr = new XMLHttpRequest();
+  return new Promise(function(resolve, reject){
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', url, true);
+    xhr.onload = () => {
+      
+    }
+  });
+  /*var xhr = new XMLHttpRequest();
   xhr.open('GET', url, true);
   xhr.onload = () => done(null, xhr.response);
   xhr.onerror = () => done(xhr.response);
-  xhr.send();
+  xhr.send();*/
 }
 
 module.exports = function (app, db) {

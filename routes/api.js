@@ -74,7 +74,7 @@ module.exports = function (app, db) {
               $push: {valueData: stock.valueData[0]},
               $set: {likes}
             });
-            return {stock: stock.symbol, price: stock.valueData[0].close || stock.value[0].open, likes.length};
+            return {stock: stock.symbol, price: stock.valueData[0].close || stock.valueData[0].open, likes: likes.length};
           } else {
             let valueData = docs[docIndex].valueData;
             if (stocks.valueData.open != valueData.open 
@@ -83,20 +83,31 @@ module.exports = function (app, db) {
                 || stock.valueData.close != valueData.close 
                 || stock.valueData.volume != valueData.volume 
                 || req.query.likes) {
+              let likes = docs[docIndex].likes;
+              if (req.query.likes) likes.push(ip);
               db.collection('stocks').updateOne({
                 _id: docs[docIndex]._id, 
                 'valueData.date': stock.valueData.date},{
+                $set: {
                 'valueData.$.open': stock.valueData.open,
                 'valueData.$.high': stock.valueData.high,
                 'valueData.$.low': stock.valueData.low,
                 'valueData.$.close': stock.valueData.close,
-                'valueData.$.volume': stock.valueData.volume
-              })
+                'valueData.$.volume': stock.valueData.volume,
+                likes
+              }})
+              return {stock: stock.symbol, price: stock.valueData[0].close || stock.valueData[0].open, likes: likes.length}
             }
           }
         }))
-        .then(result => {
-          
+        .then(data => {
+          if (data.length == 2) {
+            data[0].rel_likes = data[0].likes - data[1].likes;
+            data[1].rel_likes = data[1].likes - data[0].likes;
+            delete data[0].likes;
+            delete data[1].likes;
+            res.json(data);
+          }
         })
       })
     })

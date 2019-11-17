@@ -54,8 +54,7 @@ module.exports = function (app, db) {
         return {
           symbol: metaData['2. Symbol'],
           timeZone: metaData['5. Time Zone'],
-          date: dates[0],
-          valueData: valueData[dates[0]]
+          valueData: Object.assign({date: dates[0]}, valueData[dates[0]])
         }
       })
       .catch(err => console.log('Promise Error: ', err))
@@ -66,7 +65,11 @@ module.exports = function (app, db) {
       .toArray().then(docs => {
         if (docs.length == 0) {
           
-        } else if (docs.some(doc=>doc.))
+        } else if (docs.map(doc=>doc.valueData[0].date).some(date=>data.map(e=>e.valueData.date).indexOf(date) == -1)) {
+          
+        } else {
+          
+        }
       })
     })
     .catch(err => res.json(err));

@@ -52,7 +52,7 @@ module.exports = function (app, db) {
         return {
           symbol: metaData['2. Symbol'],
           timeZone: metaData['5. Time Zone'],
-          valueData: Object.assign({date: dates[0]}, valueData[dates[0]])
+          valueData: [Object.assign({date: dates[0]}, valueData[dates[0]])]
         }
       })
       .catch(err => console.log('Promise Error: ', err))
@@ -62,12 +62,10 @@ module.exports = function (app, db) {
       .toArray().then(docs => {
         var docSymbols = docs.map(doc=>doc.symbol);
         Promise.all(data.map(stock => {
-          var docIndex = docSymbols.indexOf(stock);
+          var docIndex = docSymbols.indexOf(stock.symbol);
           if (docIndex == -1) {
-            db.collection.insertOne({
-              
-            })
-          } else if (docs[docIndex].valueData.map(e=>e.date).indexOf(stock.valueData.date) == -1) {
+            db.collection.insertOne(Object.assign(stock, {likes: req.query.like ? 1 : 0}))
+          } else if (docs[docIndex].valueData.map(e=>e.date).indexOf(stock.valueData[0].date) == -1) {
             
           } else {
             

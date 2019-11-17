@@ -87,17 +87,16 @@ module.exports = function (app, db) {
             });
             return {stock: stock.symbol, price: stock.valueData[0].close || stock.valueData[0].open, likes: likes.length};
           } else {
-            console.log('test1');
-            let valueData = docs[docIndex].valueData[docs[docIndex]];
+            let valueData = docs[docIndex].valueData[docs[docIndex].valueData.length-1];
+            let likes = docs[docIndex].likes;
+            if (req.query.like) likes.push(ip);
             if (stock.valueData[0].open != valueData.open 
                 || stock.valueData[0].high != valueData.high 
                 || stock.valueData[0].low != valueData.low 
                 || stock.valueData[0].close != valueData.close 
                 || stock.valueData[0].volume != valueData.volume 
                 || req.query.likes) {
-              console.log(stocks.valueData[0], valueData);
-              let likes = docs[docIndex].likes;
-              if (req.query.like) likes.push(ip);
+              
               db.collection('stocks').updateOne({
                 _id: docs[docIndex]._id, 
                 'valueData.date': stock.valueData[0].date},{
@@ -109,11 +108,12 @@ module.exports = function (app, db) {
                 'valueData.$.volume': stock.valueData[0].volume,
                 likes
               }})
-              return {stock: stock.symbol, price: stock.valueData[0].close || stock.valueData[0].open, likes: likes.length}
             }
+            return {stock: stock.symbol, price: stock.valueData[0].close || stock.valueData[0].open, likes: likes.length}
           }
         }))
         .then(data => {
+          console.log(data)
           if (data.length == 2) {
             data[0].rel_likes = data[0].likes - data[1].likes;
             data[1].rel_likes = data[1].likes - data[0].likes;
@@ -122,7 +122,7 @@ module.exports = function (app, db) {
           }
           res.json(data);
         })
-        .catch(err=>res.json(err))
+        .catch(err=>console.log(err))
       })
       .catch(err=>console.log(err))
     })

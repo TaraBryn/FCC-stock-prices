@@ -24,13 +24,13 @@ module.exports = function (app, db) {
       var url = `https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=${e}&apikey=${process.env.API_KEY}`;
       var dataReq = new XMLHttpRequest();
       dataReq.open('GET', url, true);
-      dataReq.send();
       dataReq.onload=function(){
         var rawData = JSON.parse(dataReq.responseText);
         var data = rawData['Time Series (Daily)'];
         var keys = Object.keys(data).sort((a,b)=>a-b);
         return data[keys[0]];
       }
+      return dataReq.send();
     }))
     .then(data => {
       console.log(data);

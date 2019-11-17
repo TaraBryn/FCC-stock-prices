@@ -68,7 +68,8 @@ module.exports = function (app, db) {
     }))
     .then(data => {
       db.collection('stocks').find({symbol: {$in: data.map(e=>e.symbol)}})
-      .toArray().then(docs => {
+      .toArray()
+      .then(docs => {
         var docSymbols = docs.map(doc=>doc.symbol);
         Promise.all(data.map(stock => {
           var docIndex = docSymbols.indexOf(stock.symbol);
@@ -120,6 +121,7 @@ module.exports = function (app, db) {
         })
         .catch(err=>res.json(err))
       })
+      .catch(err=>console.log(err))
     })
     .catch(err => res.json(err));
   });

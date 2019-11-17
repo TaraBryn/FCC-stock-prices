@@ -12,19 +12,26 @@ var expect = require('chai').expect;
 var ObjectId = require('mongodb').ObjectId;
 var XMLHttpRequest = require('xmlhttprequest').XMLHttpRequest;
 
-function makeRequest(url, done){
+function makeRequest(url){
   return new Promise(function(resolve, reject){
     var xhr = new XMLHttpRequest();
     xhr.open('GET', url, true);
-    xhr.onload = () => {
-      
+    xhr.onload = function() {
+      if (this.status > 200 && this.status < 300)
+        resolve(xhr.responseText);
+      else reject({
+        status: this.status,
+        statusText: xhr.statusText
+      });
     }
+    xhr.onerror = function(){
+      reject({
+        status: this.status,
+        statusText: this.statusText
+      })
+    };
+    xhr.send();
   });
-  /*var xhr = new XMLHttpRequest();
-  xhr.open('GET', url, true);
-  xhr.onload = () => done(null, xhr.response);
-  xhr.onerror = () => done(xhr.response);
-  xhr.send();*/
 }
 
 module.exports = function (app, db) {
@@ -39,17 +46,16 @@ module.exports = function (app, db) {
       var url = `https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=${e}&apikey=${process.env.API_KEY}`;
       var dataReq = new XMLHttpRequest();
       dataReq.open('GET', url, true);
-      makeRequest(url, (err, data) => {
-        if (err) console.log(err);
-        console.log(data)
-      })
-      /*dataReq.onload=new Promise(function(){
-        var rawData = JSON.parse(dataReq.responseText);
+      return makeRequest(url)
+      .then(rawData => {
         var data = rawData['Time Series (Daily)'];
         var keys = Object.keys(data).sort((a,b)=>a-b);
         return data[keys[0]];
       })
-      return new Promise (dataReq.send()).then(data=>data);*/
+      .catch(err => console.log(err))
     }))
+    .then(data => {
+      console.log(data);
+    })
   });
 };

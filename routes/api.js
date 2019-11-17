@@ -67,7 +67,7 @@ module.exports = function (app, db) {
           if (docIndex == -1) {
             db.collection('stocks').insertOne(stock);
             return {stock: stock.symbol, price: stock.valueData[0].close || stock.value[0].open, likes: stock.likes.length};
-          } else if (docs[docIndex].valueData.map(e=>e.date).indexOf(stock.valueData[0].date) == -1) {
+          } else if (req.query.likes || docs[docIndex].valueData.map(e=>e.date).indexOf(stock.valueData[0].date) == -1) {
             let likes = docs[docIndex].likes;
             if (req.query.likes) likes.push(ip);
             db.collection('stocks').updateOne({_id: docs[docIndex]._id}, {
@@ -76,7 +76,23 @@ module.exports = function (app, db) {
             });
             return {stock: stock.symbol, price: stock.valueData[0].close || stock.value[0].open, likes.length};
           } else {
-            
+            let valueData = docs[docIndex].valueData;
+            if (stocks.valueData.open != valueData.open 
+                || stock.valueData.high != valueData.high 
+                || stock.valueData.low != valueData.low 
+                || stock.valueData.close != valueData.close 
+                || stock.valueData.volume != valueData.volume 
+                || req.query.likes) {
+              db.collection('stocks').updateOne({
+                _id: docs[docIndex]._id, 
+                'valueData.date': stock.valueData.date},{
+                'valueData.$.open': stock.valueData.open,
+                'valueData.$.high': stock.valueData.high,
+                'valueData.$.low': stock.valueData.low,
+                'valueData.$.close': stock.valueData.close,
+                'valueData.$.volume': stock.valueData.volume
+              })
+            }
           }
         }))
         .then(result => {

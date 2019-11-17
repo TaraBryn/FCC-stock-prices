@@ -49,12 +49,14 @@ module.exports = function (app, db) {
         var metaData = data['Meta Data'];
         var valueData = data["Time Series (Daily)"];
         var dates = Object.keys(valueData).sort((a,b)=>a-b);
-        return {
+        var result =  {
           symbol: metaData['2. Symbol'],
           timeZone: metaData['5. Time Zone'],
-          likes: req.query.likes ? [ip] : [],
+          likes: req.query.like ? [ip] : [],
           valueData: [Object.assign({date: dates[0]}, valueData[dates[0]])]
         }
+        console.log(result);
+        return result;
       })
       .catch(err => console.log('Promise Error: ', err))
     }))
@@ -69,7 +71,7 @@ module.exports = function (app, db) {
             return {stock: stock.symbol, price: stock.valueData[0].close || stock.value[0].open, likes: stock.likes.length};
           } else if (req.query.likes || docs[docIndex].valueData.map(e=>e.date).indexOf(stock.valueData[0].date) == -1) {
             let likes = docs[docIndex].likes;
-            if (req.query.likes) likes.push(ip);
+            if (req.query.like) likes.push(ip);
             db.collection('stocks').updateOne({_id: docs[docIndex]._id}, {
               $push: {valueData: stock.valueData[0]},
               $set: {likes}
@@ -84,7 +86,7 @@ module.exports = function (app, db) {
                 || stock.valueData.volume != valueData.volume 
                 || req.query.likes) {
               let likes = docs[docIndex].likes;
-              if (req.query.likes) likes.push(ip);
+              if (req.query.like) likes.push(ip);
               db.collection('stocks').updateOne({
                 _id: docs[docIndex]._id, 
                 'valueData.date': stock.valueData.date},{

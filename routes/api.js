@@ -64,9 +64,12 @@ module.exports = function (app, db) {
         Promise.all(data.map(stock => {
           var docIndex = docSymbols.indexOf(stock.symbol);
           if (docIndex == -1) {
-            db.collection.insertOne(Object.assign(stock, {likes: req.query.like ? 1 : 0}))
+            db.collection('stocks').insertOne(Object.assign(stock, {likes: req.query.like ? 1 : 0}));
+            return {stock: stock.symbol, price: stock.valueData[0]. close || stock.balue[0].open, likes: req.querty.like ? 1 : 0};
           } else if (docs[docIndex].valueData.map(e=>e.date).indexOf(stock.valueData[0].date) == -1) {
-            
+            let likes = docs[docIndex].likes;
+            if (req.query.likes) likes++;
+            db.collection('stocks').updateOne({_id: docs[docIndex]._id}, {$push})
           } else {
             
           }

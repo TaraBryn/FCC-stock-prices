@@ -26,8 +26,10 @@ module.exports = function (app, db) {
       dataReq.open('GET', url, true);
       dataReq.send();
       dataReq.onload=function(){
-        var data = JSON.parse(dataReq.responseText)['Time Series (dail)']
-        console.log(data);
+        var rawData = JSON.parse(dataReq.responseText);
+        var data = rawData['Time Series (Daily)'];
+        var keys = Object.keys(data).sort((a,b)=>a-b);
+        console.log(data[keys[0]]);
         
       }
     }))

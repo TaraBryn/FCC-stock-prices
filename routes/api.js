@@ -87,24 +87,26 @@ module.exports = function (app, db) {
             });
             return {stock: stock.symbol, price: stock.valueData[0].close || stock.valueData[0].open, likes: likes.length};
           } else {
-            let valueData = docs[docIndex].valueData;
-            if (stocks.valueData.open != valueData.open 
-                || stock.valueData.high != valueData.high 
-                || stock.valueData.low != valueData.low 
-                || stock.valueData.close != valueData.close 
-                || stock.valueData.volume != valueData.volume 
+            console.log('test1');
+            let valueData = docs[docIndex].valueData[docs[docIndex]];
+            if (stock.valueData[0].open != valueData.open 
+                || stock.valueData[0].high != valueData.high 
+                || stock.valueData[0].low != valueData.low 
+                || stock.valueData[0].close != valueData.close 
+                || stock.valueData[0].volume != valueData.volume 
                 || req.query.likes) {
+              console.log(stocks.valueData[0], valueData);
               let likes = docs[docIndex].likes;
               if (req.query.like) likes.push(ip);
               db.collection('stocks').updateOne({
                 _id: docs[docIndex]._id, 
-                'valueData.date': stock.valueData.date},{
+                'valueData.date': stock.valueData[0].date},{
                 $set: {
-                'valueData.$.open': stock.valueData.open,
-                'valueData.$.high': stock.valueData.high,
-                'valueData.$.low': stock.valueData.low,
-                'valueData.$.close': stock.valueData.close,
-                'valueData.$.volume': stock.valueData.volume,
+                'valueData.$.open': stock.valueData[0].open,
+                'valueData.$.high': stock.valueData[0].high,
+                'valueData.$.low': stock.valueData[0].low,
+                'valueData.$.close': stock.valueData[0].close,
+                'valueData.$.volume': stock.valueData[0].volume,
                 likes
               }})
               return {stock: stock.symbol, price: stock.valueData[0].close || stock.valueData[0].open, likes: likes.length}
